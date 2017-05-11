@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import net.slipp.domain.User;
@@ -34,8 +36,22 @@ public class UserController {
 		return "/user/form";
 	}
 	
+	@GetMapping("/{id}/form")
+	public String updateform(@PathVariable Long id, Model model){
+		model.addAttribute("user", userRepository.findOne(id)); //사용자 정보를 찾아옴
+		return "/user/updateForm";
+	}
+	
 	@RequestMapping("/login")
 	public String login(){
 		return "/user/login";
+	}
+	
+	@PutMapping("/{id}")
+	public String update(@PathVariable Long id, User updateUser){
+		User user = userRepository.findOne(id);
+		user.update(updateUser);
+		userRepository.save(user);
+		return "redirect:/users";
 	}
 }
