@@ -1,5 +1,8 @@
 package net.slipp.domain;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,16 +15,17 @@ public class Question {
 	
 	private String writer;
 	private String title;
-
 	private String contents;
+	private Date dateTime;
 	
 	public Question() {}
 	
-	public Question(String writer, String title, String contents) {
+	public Question(String writer, String title, String contents, Date dateTime){
 		super();
 		this.writer = writer;
 		this.title = title;
 		this.contents = contents;
+		this.dateTime = dateTime;
 	}
 
 	public Long getId() {
