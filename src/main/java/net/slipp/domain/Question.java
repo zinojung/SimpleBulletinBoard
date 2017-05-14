@@ -64,4 +64,13 @@ public class Question {
 	public void setContents(String contents) {
 		this.contents = contents;
 	}
+	
+	public User getWriter(){
+		return this.writer;
+	}
+	
+	public void update(Question question){
+		this.title = question.title;
+		this.contents = question.contents;
+	}
 }

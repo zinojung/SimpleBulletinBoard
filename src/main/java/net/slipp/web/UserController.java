@@ -91,15 +91,15 @@ public class UserController {
 	
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id, User updateUser, HttpSession session){
-		Object tempUser = session.getAttribute("sessionedUser");
-		if(tempUser == null){
+		if(!HttpSessionUtils.isLoginUser(session)){
 			return "redirect:/users/loginForm";
 		}
 		
-		User sessionedUser = (User)tempUser;
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
 		if(!sessionedUser.matchId(id)){
 			throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
 		}
+		
 		User user = userRepository.findOne(id);
 		user.update(updateUser);
 		userRepository.save(user);
