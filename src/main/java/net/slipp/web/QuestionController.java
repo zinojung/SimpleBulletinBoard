@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import net.slipp.domain.Comment;
+import net.slipp.domain.CommentRepository;
 import net.slipp.domain.Question;
 import net.slipp.domain.QuestionRepository;
 import net.slipp.domain.User;
@@ -25,7 +27,22 @@ public class QuestionController {
 	private QuestionRepository questionRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private CommentRepository commentRepository;
 
+	//검증 메소드
+	private boolean hasPermission(HttpSession session, Question question){
+		if (!HttpSessionUtils.isLoginUser(session)) {
+			throw new IllegalStateException("로그인이 필요합니다.");
+		}
+		
+		User loginUser = HttpSessionUtils.getUserFromSession(session);
+		if(!question.isSameWriter(loginUser)){
+			throw new IllegalStateException("자신이 쓴 글만 수정, 삭제가 가능합니다.");
+		}
+		return true;
+	}
+	
 	@GetMapping("/form")
 	public String form(HttpSession session) {
 		if (!HttpSessionUtils.isLoginUser(session)) {
@@ -60,19 +77,16 @@ public class QuestionController {
 
 	@GetMapping("/form/{id}")
 	public String update(@PathVariable Long id, HttpSession session, Model model) {
-
-		// 로그인 했는지
-		if (!HttpSessionUtils.isLoginUser(session)) {
+		try{
+			Question question = questionRepository.findOne(id);
+			hasPermission(session, question);
+			model.addAttribute("question", questionRepository.findOne(id));
+			return "/qna/updateForm";
+		} catch (IllegalStateException e){
+			model.addAttribute("errorMessage", e.getMessage());
 			return "/users/loginForm";
 		}
-		// 자신의 게시글 인지 확인
-		User writer = questionRepository.findOne(id).getWriter();
-		if (!HttpSessionUtils.isMatchWriterAndSessionUser(session, writer)) {
-			throw new IllegalStateException("자신의 게시글만 수정할 수 있습니다.");
-		}
 		// 모델에 수정하려는 게시글 데이터 저장
-		model.addAttribute("question", questionRepository.findOne(id));
-		return "/qna/updateForm";
 	}
 
 	@PutMapping("/{id}")
@@ -82,12 +96,11 @@ public class QuestionController {
 			return "/users/loginForm";
 		}
 		// 자신의 게시글 인지 확인
-		User writer = questionRepository.findOne(id).getWriter();
-		if (!HttpSessionUtils.isMatchWriterAndSessionUser(session, writer)) {
-			throw new IllegalStateException("자신의 게시글만 수정할 수 있습니다.");
+		Question question = questionRepository.findOne(id);
+		if (!question.isSameWriter(HttpSessionUtils.getUserFromSession(session))) {
+			throw new IllegalStateException("자신의 게시글만 삭제할 수 있습니다.");
 		}
 
-		Question question = questionRepository.findOne(id);
 		question.update(updateQuestion);
 		questionRepository.save(question);
 		return "redirect:/questions/show/{id}";
@@ -100,11 +113,14 @@ public class QuestionController {
 			return "/users/loginForm";
 		}
 		// 자신의 게시글 인지 확인
-		User writer = questionRepository.findOne(id).getWriter();
-		if (!HttpSessionUtils.isMatchWriterAndSessionUser(session, writer)) {
+		Question question = questionRepository.findOne(id);
+		if (!question.isSameWriter(HttpSessionUtils.getUserFromSession(session))) {
 			throw new IllegalStateException("자신의 게시글만 삭제할 수 있습니다.");
 		}
 		questionRepository.delete(id);
 		return "redirect:/";
 	}
+	
+	
+
 }
