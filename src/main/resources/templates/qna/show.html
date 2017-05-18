@@ -41,12 +41,12 @@
 					{{#errorMessage}}
 					<div class="alert alert-danger" role="alert">{{this}}</div>
 					{{/errorMessage}}
-					<form class="submit-write" method="post" action="/questions/{{id}}/comments">
+					<form class="answer-write" method="post" action="/api/questions/{{id}}/comments">
 						<div class="form-group" style="padding: 14px;">
 							<textarea class="form-control" placeholder="Update your status"
 								name="contents"></textarea>
 						</div>
-						<button class="btn btn-success pull-right" type="submit">답변하기</button>
+						<input class="btn btn-success pull-right" type="submit" value="답변하기"/>
 						<div class="clearfix" />
 					</form>
 					
@@ -127,8 +127,8 @@
 </script>
 
 <!-- script references -->
-<script src="../js/jquery-2.2.0.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
-<script src="../js/scripts.js"></script>
+<script src="/js/jquery-2.2.0.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/scripts.js"></script>
 	</body>
 </html>

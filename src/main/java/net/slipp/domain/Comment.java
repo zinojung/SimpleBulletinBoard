@@ -11,22 +11,30 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class Comment {
 	@Id
 	@GeneratedValue
+	@JsonProperty
 	private Long id;
 	
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_comment_writer"))
+	@JsonProperty
 	private User writer;
 	
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_comment_question"))
+	@JsonProperty
 	private Question question;
 	@Lob
+	@JsonProperty
 	private String contents;
+	@JsonProperty
 	private LocalDateTime createDate;
+	
 	private LocalDateTime updateDate;
 	
 	@Override
@@ -81,13 +89,6 @@ public class Comment {
 			return "";
 		}
 		return createDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
-	}
-	
-	public String getFormattedUpdateDate(){
-		if(createDate == null) {
-			return "";
-		}
-		return updateDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
 	}
 	
 	public boolean isSameWriter(User loginUser){
