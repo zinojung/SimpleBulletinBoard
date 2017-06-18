@@ -93,7 +93,8 @@ public class QuestionController {
 			if(e.getMessage().equals(PERMISSION_LOGIN)){
 				return "/user/login";
 			} else{
-				return String.format("redirect:/questions/show/%d", id);
+				return "/qna/show";
+						//String.format("redirect:/questions/show/%d", id);
 			}
 		}
 	}
@@ -130,7 +131,8 @@ public class QuestionController {
 			if(e.getMessage().equals(PERMISSION_LOGIN)){
 				return "/user/login";
 			} else{
-				return String.format("redirect:/questions/show/%d", id);
+				return "/qna/show";
+				//return String.format("redirect:/questions/show/%d", id);
 			}
 		}
 	}

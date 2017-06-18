@@ -57,7 +57,6 @@ public class UserController {
 	@PostMapping("")
 	public String create(User user){
 		System.out.println("user : " + user);
-		
 		userRepository.save(user);
 		return "redirect:/users";
 	}
@@ -75,7 +74,7 @@ public class UserController {
 	
 	@GetMapping("/{id}/form")
 	public String updateform(@PathVariable Long id, Model model, HttpSession session){
-		if(HttpSessionUtils.isLoginUser(session)){
+		if(!HttpSessionUtils.isLoginUser(session)){
 			return "redirect:/users/loginForm";
 		}
 	
@@ -91,10 +90,7 @@ public class UserController {
 	
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id, User updateUser, HttpSession session){
-		if(!HttpSessionUtils.isLoginUser(session)){
-			return "redirect:/users/loginForm";
-		}
-		
+
 		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
 		if(!sessionedUser.matchId(id)){
 			throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
